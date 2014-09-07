@@ -2549,6 +2549,38 @@ static struct platform_driver bam_dmux_driver = {
 	},
 };
 
+#ifdef BAM_DMUX_FD
+struct device *bamDmux_pkt_dev;
+
+static ssize_t show_waketime(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	if (!bamDmux_pkt_dev)
+		return 0;
+
+	return snprintf(buf, (int)sizeof(buf), "%u\n", wakelock_timeout);
+}
+
+static ssize_t store_waketime(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int r;
+	unsigned long msec;
+	if (!bamDmux_pkt_dev)
+		return count;
+
+	r = kstrtoul(buf, 10, &msec);
+
+	if (r)
+		return count;
+
+	wakelock_timeout = (msec/1000);
+	return count;
+}
+
+static DEVICE_ATTR(waketime, 0664, show_waketime, store_waketime);
+#endif
+
 static int __init bam_dmux_init(void)
 {
 #ifdef CONFIG_DEBUG_FS
