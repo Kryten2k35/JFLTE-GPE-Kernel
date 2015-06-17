@@ -1,3 +1,4 @@
 out/*
 dist/boot.img
-dist/system/lib/modules/*
+dist/modules/*
+JFLTE_GPE_Stock_Kernel.zip
