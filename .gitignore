@@ -1,1 +1,3 @@
 out/*
+dist/boot.img
+dist/system/lib/modules/*

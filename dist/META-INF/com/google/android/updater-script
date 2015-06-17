@@ -1,0 +1,44 @@
+ui_print("Installing stock GPE Kernel...");
+
+ui_print("Mounting system");
+
+run_program("/sbin/busybox", "mount", "/system");
+
+ui_print("Deleting kernel apps.");
+
+delete_recursive("/system/app/STweaks.apk");
+delete_recursive("/system/app/STweaks/STweaks.apk");
+delete_recursive("/system/priv-app/STweaks/STweaks.apk");
+delete_recursive("/system/priv-app/STweaks.apk");
+
+ui_print("Deleting old modules");
+
+delete_recursive("/system/lib/modules");
+
+ui_print("Copying modules");
+ui_print("");
+package_extract_dir("modules", "/system/lib/modules");
+set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
+
+ui_print("Extracting files");
+
+delete_recursive("/tmp/boot.img");
+delete_recursive("/tmp/loki_bootloaders");
+delete_recursive("/tmp/flash_kernel.sh");
+delete_recursive("/tmp/loki_patch");
+delete_recursive("/tmp/loki_flash");
+
+package_extract_dir("loki", "/tmp");
+package_extract_file("boot.img", "/tmp/boot.img");
+
+set_perm(0, 0, 0777, "/tmp/loki_bootloaders");
+set_perm(0, 0, 0777, "/tmp/flash_kernel.sh");
+set_perm(0, 0, 0777, "/tmp/loki_patch");
+set_perm(0, 0, 0777, "/tmp/loki_flash");
+
+ui_print("Flashing kernel");
+
+run_program("/tmp/flash_kernel.sh");
+
+unmount("/system");
+ui_print("Done. Please reboot.");
