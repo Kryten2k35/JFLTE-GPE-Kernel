@@ -45,7 +45,7 @@ INITRAMFS="$KERNEL_DIR"/../GE_5.0_Ramdisk
 DIST="$KERNEL_DIR"/dist
 
 # Kernel filename
-FILENAME=JFLTE_GPE_Stock_Kernel.zip
+FILENAME=JFLTE-GPE_Stock_Kernel.zip
 
 
 # Ready to build
