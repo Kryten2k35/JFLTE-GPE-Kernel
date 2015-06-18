@@ -52,28 +52,28 @@ FILENAME=JFLTE-GPE_Stock_Kernel.zip
 echo -e "\e[1;91mBuilding JFLTE-GPE stock kernel"
 echo -e "\e[0m "
 
-if [ ! -e "$KERNEL_DIR"/out ]; then
-	echo -e "\e[1;91mCreating out folder"
+if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
+	echo -e "\e[1;91mRemoving old zImage"
 	echo -e "\e[0m "
-	mkdir "$KERNEL_DIR"/out
+	rm "$KERNEL_DIR"/arch/arm/boot/zImage
 fi
 
-echo -e "\e[1;91mRemoving old zImage"
-echo -e "\e[0m "
-rm "$OUTPUT_DIR"/arch/arm/boot/zImage "$KERNEL_DIR"/arch/arm/boot/zImage
+if [ ! -e "$KERNEL_DIR"/.config ];then
+	echo " "
+	echo -e "\e[1;91mCreating config"
+	echo -e "\e[0m "
+	cp "$KERNEL_DIR"/arch/arm/configs/jflte_gpe_defconfig "$KERNEL_DIR"/.config
+fi
 
-echo -e "\e[1;91mCreating config"
-echo -e "\e[0m "
-make -j"$NUMBEROFCPUS" -C "$KERNEL_DIR" O="$OUTPUT_DIR" VARIANT_DEFCONFIG=jf_"$VARIANT"_defconfig jf_defconfig SELINUX_DEFCONFIG=selinux_defconfig
-
+echo " "
 echo -e "\e[1;91mBuilding kernel"
 echo -e "\e[0m "
-make -j"$NUMBEROFCPUS" -C "$KERNEL_DIR" O=$"$OUTPUT_DIR"
+make -j"$NUMBEROFCPUS"
 
-if [ -e "$OUTPUT_DIR"/arch/arm/boot/zImage ];then
+if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
 	echo -e "\e[1;91mPacking kernel into boot.img"
 	echo -e "\e[0m "
-	cp "$OUTPUT_DIR"/arch/arm/boot/zImage "$DIST"/zImage
+	cp "$KERNEL_DIR"/arch/arm/boot/zImage "$DIST"/zImage
 	./mkbootfs $INITRAMFS | gzip > $DIST/ramdisk.gz
 	./mkbootimg --cmdline 'console=null androidboot.hardware=jgedlte user_debug=23 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=msm_sdcc.1 androidboot.selinux=permissive' --kernel "$DIST"/zImage --ramdisk "$DIST"/ramdisk.gz --base 0x80200000 --pagesize 2048 --ramdisk_offset 0x02000000 --output "$DIST"/boot.img
 	
@@ -85,26 +85,38 @@ if [ -e "$OUTPUT_DIR"/arch/arm/boot/zImage ];then
 		rm "$DIST"/zImage
 	fi;
 
+	echo " "
 	echo -e "\e[1;91mDeleting old modules"
 	echo -e "\e[0m "
 	rm -rf "$DIST"/modules/*
 
+	echo " "
 	echo -e "\e[1;91mCopying new modules"
 	echo -e "\e[0m "
-	for i in `find $KERNELDIR -name '*.ko'`; do
+	for i in `find $KERNEL_DIR -name '*.ko'`; do
 		cp -av $i "$DIST"/modules/;
 	done;
 
+	if [ -e "$KERNEL_DIR"/"$FILENAME" ];then
+		echo " "
+		echo -e "\e[1;91mDeleting old zip"
+		echo -e "\e[0m "
+		rm "$KERNEL_DIR"/"$FILENAME"
+	fi
+
+	echo " "
 	echo -e "\e[1;91mPacking zip"
 	echo -e "\e[0m "
 	cd "$DIST"	
 	zip -r ../$FILENAME .
-	cd "$KERNELDIR"
+	cd "$KERNEL_DIR"
 
+	echo " "
 	echo -e "\e[1;91mDone"
 	echo -e "\e[0m "
 	exit 0
 else
+	echo " "
 	echo -e "\e[1;91mzImage not found, kernel build failed"
 	echo -e "\e[0m "
 	exit 1
