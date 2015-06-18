@@ -85,7 +85,11 @@ if [ -e "$OUTPUT_DIR"/arch/arm/boot/zImage ];then
 		rm "$DIST"/zImage
 	fi;
 
-	echo -e "\e[1;91mCopy modules to dist"
+	echo -e "\e[1;91mDeleting old modules"
+	echo -e "\e[0m "
+	rm -rf "$DIST"/modules/*
+
+	echo -e "\e[1;91mCopying new modules"
 	echo -e "\e[0m "
 	for i in `find $KERNELDIR -name '*.ko'`; do
 		cp -av $i "$DIST"/modules/;
