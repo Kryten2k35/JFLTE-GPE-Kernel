@@ -24,7 +24,7 @@ done
 KERNEL_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # Setup the cross compile
-export CROSS_COMPILE=/mnt/Android/Kernels/cr-arm-eabi-4.9.3/bin/arm-eabi-
+export CROSS_COMPILE=/mnt/Android/Kernels/cr-arm_eabi-4.9.3/bin/arm-eabi-
 
 # Setup the output dir
 export OUTPUT_DIR="$KERNEL_DIR"/out
