@@ -24,7 +24,7 @@ done
 KERNEL_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # Setup the cross compile
-export CROSS_COMPILE=/mnt/Android/Kernels/cr-arm_eabi-4.9.3/bin/arm-eabi-
+export CROSS_COMPILE="$KERNEL_DIR"/../Christopher83_Linaro_4.9.3/bin/arm-eabi-
 
 # Setup the output dir
 export OUTPUT_DIR="$KERNEL_DIR"/out
@@ -39,7 +39,7 @@ NUMBEROFCPUS=$(expr `grep processor /proc/cpuinfo | wc -l` + 1);
 VARIANT=eur
 
 # Ramdisk location
-INITRAMFS="$KERNEL_DIR"/../GE_5.0_Ramdisk
+INITRAMFS="$KERNEL_DIR"/../Ramdisk
 
 # Distribution folder
 DIST="$KERNEL_DIR"/dist
