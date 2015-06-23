@@ -68,7 +68,7 @@ fi
 echo " "
 echo -e "\e[1;91mBuilding kernel"
 echo -e "\e[0m "
-make -j"$NUMBEROFCPUS"
+schedtool -B -n 1 -e ionice -n 1 make -j"$NUMBEROFCPUS"
 
 if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
 	echo -e "\e[1;91mPacking kernel into boot.img"
