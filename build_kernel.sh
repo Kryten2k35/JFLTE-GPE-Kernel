@@ -85,10 +85,17 @@ if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
 		rm "$DIST"/zImage
 	fi;
 
-	echo " "
-	echo -e "\e[1;91mDeleting old modules"
-	echo -e "\e[0m "
-	rm -rf "$DIST"/modules/*
+	if [ ! -e "$DIST"/modules ];then
+		echo " "
+		echo -e "\e[1;91mCreating modules directory"
+		echo -e "\e[0m "
+		mkdir -p "$DIST"/modules
+	else 
+		echo " "
+		echo -e "\e[1;91mDeleting old modules"
+		echo -e "\e[0m "
+		rm -rf "$DIST"/modules/*
+	fi
 
 	echo " "
 	echo -e "\e[1;91mCopying new modules"
